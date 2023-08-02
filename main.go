@@ -14,7 +14,7 @@ import (
 func main() {
 
 	config := cors.DefaultConfig()
-	config.AllowOrigins = []string{"https://baile-da-jack.onrender.com"}
+	config.AllowOrigins = []string{"https://bailedajack.onrender.com/"}
 	config.AllowMethods = []string{"GET", "POST", "PUT", "DELETE"}
 	config.AllowHeaders = []string{"Authorization", "Content-Type", "x-user"}
 
