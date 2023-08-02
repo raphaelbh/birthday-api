@@ -17,9 +17,9 @@ type Quiz struct {
 }
 
 type Rank struct {
-	Position int
-	User     string
-	Score    int
+	Position int    `json:"position"`
+	User     string `json:"user"`
+	Score    int    `json:"score"`
 }
 
 var questionsAnswers = map[string]string{
@@ -61,7 +61,7 @@ func Create(user string, answers map[string]string) {
 	fmt.Println("Quiz saved")
 }
 
-func GetAll() []Quiz {
+func getAll() []Quiz {
 	var listQuiz []Quiz
 	result := db.Find(&listQuiz)
 	if result.Error != nil {
@@ -72,7 +72,7 @@ func GetAll() []Quiz {
 
 func GetRank() []Rank {
 
-	var listQuiz = GetAll()
+	var listQuiz = getAll()
 
 	// sort list
 	sortFunc := func(i, j int) bool {
