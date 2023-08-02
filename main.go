@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 
 	questions "github.com/raphaelbh/birthday-api/questions"
@@ -13,6 +14,11 @@ import (
 func main() {
 	router := gin.Default()
 	router.SetTrustedProxies(nil)
+
+	config := cors.DefaultConfig()
+	config.AllowOrigins = []string{"https://baile-da-jack.onrender.com"}
+	config.AllowMethods = []string{"GET", "POST", "PUT", "DELETE"}
+	router.Use(cors.New(config))
 
 	router.GET("/questions", getQuestions)
 	router.POST("/quiz", postQuiz)
