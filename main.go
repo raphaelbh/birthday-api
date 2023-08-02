@@ -17,6 +17,7 @@ func main() {
 	router.GET("/questions", getQuestions)
 	router.POST("/quiz", postQuiz)
 	router.GET("/quiz", getQuiz)
+	router.GET("/rank", getRank)
 
 	port, ok := os.LookupEnv("PORT")
 	if !ok {
@@ -31,6 +32,10 @@ func getQuestions(c *gin.Context) {
 
 func getQuiz(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, quiz.GetAll())
+}
+
+func getRank(c *gin.Context) {
+	c.IndentedJSON(http.StatusOK, quiz.GetRank())
 }
 
 func postQuiz(c *gin.Context) {

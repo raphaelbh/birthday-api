@@ -3,6 +3,7 @@ package quiz
 import (
 	"encoding/json"
 	"fmt"
+	"sort"
 
 	database "github.com/raphaelbh/birthday-api/database"
 	"gorm.io/gorm"
@@ -13,6 +14,12 @@ type Quiz struct {
 	User  string
 	Score int
 	Data  string
+}
+
+type Rank struct {
+	Position int
+	User     string
+	Score    int
 }
 
 var questionsAnswers = map[string]string{
@@ -61,4 +68,29 @@ func GetAll() []Quiz {
 		panic("Error getting list of quiz: " + result.Error.Error())
 	}
 	return listQuiz
+}
+
+func GetRank() []Rank {
+
+	var listQuiz = GetAll()
+
+	// sort list
+	sortFunc := func(i, j int) bool {
+		return listQuiz[i].Score > listQuiz[j].Score
+	}
+	sort.Slice(listQuiz, sortFunc)
+
+	// rank
+	var rank []Rank
+	var score = -1
+	var position = 0
+	for _, item := range listQuiz {
+		if score != item.Score {
+			score = item.Score
+			position = len(rank) + 1
+		}
+		rank = append(rank, Rank{Position: position, User: item.User, Score: item.Score})
+	}
+
+	return rank
 }
