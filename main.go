@@ -2,6 +2,7 @@ package main
 
 import (
 	"net/http"
+	"os"
 
 	"github.com/gin-gonic/gin"
 
@@ -15,7 +16,11 @@ func main() {
 	router.GET("/questions", getQuestions)
 	router.POST("/quiz", postQuiz)
 
-	router.Run(":80")
+	port, ok := os.LookupEnv("PORT")
+	if !ok {
+		port = "8080"
+	}
+	router.Run(":" + port)
 }
 
 func getQuestions(c *gin.Context) {
