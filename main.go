@@ -28,6 +28,7 @@ func main() {
 	router.GET("/rank", getRank)
 
 	router.POST("/messages", postMessage)
+	router.GET("/messages", getMessages)
 
 	port, ok := os.LookupEnv("PORT")
 	if !ok {
@@ -70,4 +71,8 @@ func postMessage(c *gin.Context) {
 
 	messages.Create(message)
 	c.IndentedJSON(http.StatusCreated, message)
+}
+
+func getMessages(c *gin.Context) {
+	c.IndentedJSON(http.StatusOK, messages.GetAll())
 }

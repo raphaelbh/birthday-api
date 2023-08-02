@@ -29,3 +29,12 @@ func Create(message Message) {
 
 	fmt.Println("Message saved")
 }
+
+func GetAll() []Message {
+	var messages []Message
+	result := db.Find(&messages)
+	if result.Error != nil {
+		panic("Error getting list of quiz: " + result.Error.Error())
+	}
+	return messages
+}
