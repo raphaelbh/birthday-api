@@ -6,7 +6,7 @@ COPY . .
 
 RUN go build -o myapp
 
-FROM debian:buster-slim
+FROM golang:1.20
 
 COPY --from=builder /app/myapp /usr/local/bin/myapp
 
