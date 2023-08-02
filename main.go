@@ -12,12 +12,14 @@ import (
 )
 
 func main() {
-	router := gin.Default()
-	router.SetTrustedProxies(nil)
 
 	config := cors.DefaultConfig()
 	config.AllowOrigins = []string{"https://baile-da-jack.onrender.com"}
 	config.AllowMethods = []string{"GET", "POST", "PUT", "DELETE"}
+	config.AllowHeaders = []string{"Authorization", "Content-Type", "x-user"}
+
+	router := gin.Default()
+	router.SetTrustedProxies(nil)
 	router.Use(cors.New(config))
 
 	router.GET("/questions", getQuestions)
