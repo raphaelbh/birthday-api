@@ -4,12 +4,14 @@ WORKDIR /app
 
 COPY . .
 
-RUN go build -o myapp
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o myapp .
 
-FROM golang:1.20
+FROM scratch
 
-COPY --from=builder /app/myapp /usr/local/bin/myapp
+COPY --from=builder /app/myapp /myapp
 
-EXPOSE 80
+ENV PORT=8080
 
-CMD ["myapp"]
+EXPOSE $PORT
+
+CMD ["/myapp"]
