@@ -6,7 +6,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	service "github.com/raphaelbh/birthday-api/questions"
+	questions "github.com/raphaelbh/birthday-api/questions"
+	quiz "github.com/raphaelbh/birthday-api/quiz"
 )
 
 func main() {
@@ -15,6 +16,7 @@ func main() {
 
 	router.GET("/questions", getQuestions)
 	router.POST("/quiz", postQuiz)
+	router.GET("/quiz", getQuiz)
 
 	port, ok := os.LookupEnv("PORT")
 	if !ok {
@@ -24,7 +26,11 @@ func main() {
 }
 
 func getQuestions(c *gin.Context) {
-	c.IndentedJSON(http.StatusOK, service.GetAll())
+	c.IndentedJSON(http.StatusOK, questions.GetAll())
+}
+
+func getQuiz(c *gin.Context) {
+	c.IndentedJSON(http.StatusOK, quiz.GetAll())
 }
 
 func postQuiz(c *gin.Context) {
@@ -40,6 +46,6 @@ func postQuiz(c *gin.Context) {
 		return
 	}
 
-	service.Create(user, answers)
+	quiz.Create(user, answers)
 	c.IndentedJSON(http.StatusCreated, answers)
 }
