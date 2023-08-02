@@ -10,4 +10,6 @@ FROM golang:1.20
 
 COPY --from=builder /app/myapp /usr/local/bin/myapp
 
+EXPOSE 80
+
 CMD ["myapp"]
