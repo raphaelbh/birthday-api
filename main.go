@@ -8,6 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	messages "github.com/raphaelbh/birthday-api/messages"
+	photos "github.com/raphaelbh/birthday-api/photos"
 	questions "github.com/raphaelbh/birthday-api/questions"
 	quiz "github.com/raphaelbh/birthday-api/quiz"
 )
@@ -29,6 +30,9 @@ func main() {
 
 	router.POST("/messages", postMessage)
 	router.GET("/messages", getMessages)
+
+	router.POST("/photos", postPhoto)
+	router.GET("/photos", getPhotos)
 
 	port, ok := os.LookupEnv("PORT")
 	if !ok {
@@ -75,4 +79,11 @@ func postMessage(c *gin.Context) {
 
 func getMessages(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, messages.GetAll())
+}
+
+func postPhoto(c *gin.Context) {
+}
+
+func getPhotos(c *gin.Context) {
+	c.IndentedJSON(http.StatusOK, photos.GetAll())
 }
