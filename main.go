@@ -35,6 +35,8 @@ func main() {
 	router.POST("/photos", postPhoto)
 	router.GET("/photos", getPhotos)
 
+	router.GET("/health", health)
+
 	port, ok := os.LookupEnv("PORT")
 	if !ok {
 		port = "8080"
@@ -132,4 +134,8 @@ func getPhotos(c *gin.Context) {
 	}
 
 	c.IndentedJSON(http.StatusOK, photos)
+}
+
+func health(c *gin.Context) {
+	c.Writer.WriteHeader(200)
 }
