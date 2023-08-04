@@ -82,6 +82,31 @@ func getMessages(c *gin.Context) {
 }
 
 func postPhoto(c *gin.Context) {
+
+	form, err := c.MultipartForm()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	files := form.File["images[]"]
+	if len(files) < 1 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Images required"})
+		return
+	}
+
+	if len(files) > 10 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Max of 10 images"})
+		return
+	}
+
+	uploadErr := photos.Upload(files)
+	if uploadErr != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.Writer.WriteHeader(204)
 }
 
 func getPhotos(c *gin.Context) {
