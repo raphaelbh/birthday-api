@@ -27,6 +27,7 @@ func getS3Uploader() *s3manager.Uploader {
 		sess, err := session.NewSession(&aws.Config{
 			Region:      aws.String("us-east-2"),
 			Credentials: credentials.NewStaticCredentials(accessKey, secretKey, ""),
+			DisableSSL:  aws.Bool(true),
 		})
 		if err != nil {
 			exitErrorf("Unable create a connection with amazon aws, %v", err)
@@ -47,6 +48,7 @@ func getS3Client() *s3.S3 {
 		sess, err := session.NewSession(&aws.Config{
 			Region:      aws.String("us-east-2"),
 			Credentials: credentials.NewStaticCredentials(accessKey, secretKey, ""),
+			DisableSSL:  aws.Bool(true),
 		})
 		if err != nil {
 			exitErrorf("Unable create a connection with amazon aws, %v", err)
