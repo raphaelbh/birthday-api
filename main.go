@@ -110,7 +110,6 @@ func postPhoto(c *gin.Context) {
 	uploadErr := photos.Upload(files)
 	if uploadErr != nil {
 		fmt.Println("[main.postPhoto] Erro ao executar o servico: ", uploadErr)
-		fmt.Println("[main.postPhoto] Iniciando processando")
 		c.JSON(http.StatusInternalServerError, gin.H{"error": uploadErr.Error()})
 		return
 	}
@@ -119,5 +118,13 @@ func postPhoto(c *gin.Context) {
 }
 
 func getPhotos(c *gin.Context) {
-	c.IndentedJSON(http.StatusOK, photos.GetAll())
+
+	photos, err := photos.GetAll()
+	if err != nil {
+		fmt.Println("[main.postPhoto] Erro ao executar o servico: ", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.IndentedJSON(http.StatusOK, photos)
 }

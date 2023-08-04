@@ -97,12 +97,19 @@ func Upload(files []*multipart.FileHeader) (err error) {
 	return nil
 }
 
-func GetAll() []any {
+func GetAll() ([]any, error) {
 
+	fmt.Println("[photos.GetAll] Iniciando processamento")
 	svc := getS3Client()
-	resp, err := svc.ListObjectsV2(&s3.ListObjectsV2Input{Bucket: aws.String("bailedajack")})
+	fmt.Println("[photos.GetAll] svc recuperado: ", svc)
+
+	fmt.Println("[photos.GetAll] Iniciando listagem")
+	resp, err := svc.ListObjectsV2(&s3.ListObjectsV2Input{
+		Bucket: aws.String("bailedajack"),
+	})
 	if err != nil {
-		exitErrorf("Unable to list items in bucket, %v", err)
+		fmt.Println("[photos.GetAll] Erro ao listar objetos do bucket: ", err)
+		return nil, err
 	}
 
 	items := []any{}
@@ -110,7 +117,7 @@ func GetAll() []any {
 		items = append(items, *item.Key)
 	}
 
-	return items
+	return items, nil
 }
 
 func exitErrorf(msg string, args ...interface{}) {
