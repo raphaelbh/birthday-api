@@ -86,6 +86,12 @@ func postPhoto(c *gin.Context) {
 
 	fmt.Println("[main.postPhoto] Iniciando processando")
 
+	user := c.GetHeader("x-user")
+	if user == "" {
+		c.String(http.StatusBadRequest, "Header x-user not informed")
+		return
+	}
+
 	form, err := c.MultipartForm()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -106,7 +112,7 @@ func postPhoto(c *gin.Context) {
 	}
 
 	fmt.Println("[main.postPhoto] Chamando service (photos.Upload())")
-	uploadErr := photos.Upload(files)
+	uploadErr := photos.Upload(&user, files)
 	if uploadErr != nil {
 		fmt.Println("[main.postPhoto] Erro ao executar o servico: ", uploadErr)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": uploadErr.Error()})

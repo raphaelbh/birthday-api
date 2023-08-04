@@ -60,7 +60,7 @@ func getS3Client() *s3.S3 {
 	return s3Client
 }
 
-func Upload(files []*multipart.FileHeader) (err error) {
+func Upload(user *string, files []*multipart.FileHeader) (err error) {
 
 	fmt.Println("[service.Upload] Iniciando upload dos arquivos")
 
@@ -78,12 +78,17 @@ func Upload(files []*multipart.FileHeader) (err error) {
 		}
 		defer src.Close()
 
+		metadata := map[string]*string{
+			"User": user,
+		}
+
 		// send file
 		fmt.Println("[service.Upload] Enviando arquivo para bucket: ", aws.String(file.Filename))
 		_, err = uploader.Upload(&s3manager.UploadInput{
-			Bucket: aws.String("bailedajack"),
-			Key:    aws.String(file.Filename),
-			Body:   src,
+			Bucket:   aws.String("bailedajack"),
+			Key:      aws.String(file.Filename),
+			Body:     src,
+			Metadata: metadata,
 		})
 		if err != nil {
 			fmt.Println("[service.Upload] Erro ao enviar arquivo para bucket: ", err)
@@ -95,7 +100,12 @@ func Upload(files []*multipart.FileHeader) (err error) {
 	return nil
 }
 
-func GetAll() ([]any, error) {
+type Photo struct {
+	User  string `json:"user"`
+	Image string `json:"image"`
+}
+
+func GetAll() ([]Photo, error) {
 
 	fmt.Println("[photos.GetAll] Iniciando processamento")
 	svc := getS3Client()
@@ -110,9 +120,23 @@ func GetAll() ([]any, error) {
 		return nil, err
 	}
 
-	items := []any{}
+	items := []Photo{}
 	for _, item := range resp.Contents {
-		items = append(items, *item.Key)
+
+		input := &s3.HeadObjectInput{
+			Bucket: aws.String("bailedajack"),
+			Key:    item.Key,
+		}
+
+		metadata, headErr := svc.HeadObject(input)
+		if headErr != nil {
+			fmt.Println("[photos.GetAll] Erro ao recuperar metadados do item: ", headErr)
+			return nil, err
+		}
+
+		user := *metadata.Metadata["User"]
+		image := *item.Key
+		items = append(items, Photo{User: user, Image: image})
 	}
 
 	return items, nil
