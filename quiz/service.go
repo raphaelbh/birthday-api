@@ -23,8 +23,16 @@ type Rank struct {
 }
 
 var questionsAnswers = map[string]string{
-	"1": "2",
-	"2": "2",
+	"1":  "1",
+	"2":  "3",
+	"3":  "2",
+	"4":  "2",
+	"5":  "1",
+	"6":  "2",
+	"7":  "2",
+	"8":  "1",
+	"9":  "1",
+	"10": "3",
 }
 
 var db = database.Connect()
