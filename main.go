@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 	"os"
 
@@ -83,6 +84,8 @@ func getMessages(c *gin.Context) {
 
 func postPhoto(c *gin.Context) {
 
+	fmt.Println("[main.postPhoto] Iniciando processando")
+
 	form, err := c.MultipartForm()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -90,6 +93,9 @@ func postPhoto(c *gin.Context) {
 	}
 
 	files := form.File["images[]"]
+	fmt.Println("[main.postPhoto] Quantidade de arquivos recebidos: ", len(files))
+	fmt.Println("[main.postPhoto] Arquivos recebidos: ", files)
+
 	if len(files) < 1 {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Images required"})
 		return
@@ -100,9 +106,12 @@ func postPhoto(c *gin.Context) {
 		return
 	}
 
+	fmt.Println("[main.postPhoto] Chamando service (photos.Upload())")
 	uploadErr := photos.Upload(files)
 	if uploadErr != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		fmt.Println("[main.postPhoto] Erro ao executar o servico: ", uploadErr)
+		fmt.Println("[main.postPhoto] Iniciando processando")
+		c.JSON(http.StatusInternalServerError, gin.H{"error": uploadErr.Error()})
 		return
 	}
 

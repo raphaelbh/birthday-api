@@ -37,24 +37,33 @@ func getS3Client() *s3.S3 {
 
 func Upload(files []*multipart.FileHeader) (err error) {
 
-	svc := getS3Client()
+	fmt.Println("[service.Upload] Iniciando upload dos arquivos")
 
+	svc := getS3Client()
+	fmt.Println("[service.Upload] svc recuperado: ", svc)
+
+	fmt.Println("[service.Upload] Quantidade de arquivos recebidos: ", len(files))
+	fmt.Println("[service.Upload] Arquivos recebidos: ", files)
 	for _, file := range files {
 
 		// open file
+		fmt.Println("[service.Upload] Abrindo arquivo (pegando source): ", file)
 		src, err := file.Open()
 		if err != nil {
+			fmt.Println("[service.Upload] Erro ao abrir arquivo: ", err)
 			return err
 		}
 		defer src.Close()
 
 		// send file
+		fmt.Println("[service.Upload] Enviando arquivo para bucket: ", aws.String(file.Filename))
 		_, err = svc.PutObject(&s3.PutObjectInput{
 			Bucket: aws.String("bailedajack"),
 			Key:    aws.String(file.Filename),
 			Body:   src,
 		})
 		if err != nil {
+			fmt.Println("[service.Upload] Erro ao enviar arquivo para bucket: ", err)
 			return err
 		}
 
