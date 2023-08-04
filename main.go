@@ -94,7 +94,6 @@ func postPhoto(c *gin.Context) {
 
 	files := form.File["images[]"]
 	fmt.Println("[main.postPhoto] Quantidade de arquivos recebidos: ", len(files))
-	fmt.Println("[main.postPhoto] Arquivos recebidos: ", files)
 
 	if len(files) < 1 {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Images required"})

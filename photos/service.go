@@ -13,12 +13,11 @@ import (
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 )
 
-var once sync.Once
-
 var s3Client *s3.S3
 var s3Uploader *s3manager.Uploader
 
 func getS3Uploader() *s3manager.Uploader {
+	var once sync.Once
 	once.Do(func() {
 
 		accessKey, _ := os.LookupEnv("ACCESS_KEY")
@@ -40,6 +39,7 @@ func getS3Uploader() *s3manager.Uploader {
 }
 
 func getS3Client() *s3.S3 {
+	var once sync.Once
 	once.Do(func() {
 
 		accessKey, _ := os.LookupEnv("ACCESS_KEY")
@@ -68,11 +68,9 @@ func Upload(files []*multipart.FileHeader) (err error) {
 	fmt.Println("[service.Upload] svc recuperado: ", uploader)
 
 	fmt.Println("[service.Upload] Quantidade de arquivos recebidos: ", len(files))
-	fmt.Println("[service.Upload] Arquivos recebidos: ", files)
 	for _, file := range files {
 
 		// open file
-		fmt.Println("[service.Upload] Abrindo arquivo (pegando source): ", file)
 		src, err := file.Open()
 		if err != nil {
 			fmt.Println("[service.Upload] Erro ao abrir arquivo: ", err)
