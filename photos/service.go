@@ -10,10 +10,33 @@ import (
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
+	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 )
 
-var s3Client *s3.S3
 var once sync.Once
+
+var s3Client *s3.S3
+var s3Uploader *s3manager.Uploader
+
+func getS3Uploader() *s3manager.Uploader {
+	once.Do(func() {
+
+		accessKey, _ := os.LookupEnv("ACCESS_KEY")
+		secretKey, _ := os.LookupEnv("SECRET_KEY")
+
+		sess, err := session.NewSession(&aws.Config{
+			Region:      aws.String("us-east-2"),
+			Credentials: credentials.NewStaticCredentials(accessKey, secretKey, ""),
+		})
+		if err != nil {
+			exitErrorf("Unable create a connection with amazon aws, %v", err)
+		}
+
+		s3Uploader = s3manager.NewUploader(sess)
+	})
+
+	return s3Uploader
+}
 
 func getS3Client() *s3.S3 {
 	once.Do(func() {
@@ -39,8 +62,8 @@ func Upload(files []*multipart.FileHeader) (err error) {
 
 	fmt.Println("[service.Upload] Iniciando upload dos arquivos")
 
-	svc := getS3Client()
-	fmt.Println("[service.Upload] svc recuperado: ", svc)
+	uploader := getS3Uploader()
+	fmt.Println("[service.Upload] svc recuperado: ", uploader)
 
 	fmt.Println("[service.Upload] Quantidade de arquivos recebidos: ", len(files))
 	fmt.Println("[service.Upload] Arquivos recebidos: ", files)
@@ -57,7 +80,7 @@ func Upload(files []*multipart.FileHeader) (err error) {
 
 		// send file
 		fmt.Println("[service.Upload] Enviando arquivo para bucket: ", aws.String(file.Filename))
-		_, err = svc.PutObject(&s3.PutObjectInput{
+		_, err = uploader.Upload(&s3manager.UploadInput{
 			Bucket: aws.String("bailedajack"),
 			Key:    aws.String(file.Filename),
 			Body:   src,
