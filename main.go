@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"net/url"
 	"os"
 
 	"github.com/gin-contrib/cors"
@@ -62,6 +63,12 @@ func postQuiz(c *gin.Context) {
 	user := c.GetHeader("x-user")
 	if user == "" {
 		c.String(http.StatusBadRequest, "Header x-user not informed")
+		return
+	}
+
+	user, err := url.QueryUnescape(user)
+	if err != nil {
+		c.JSON(500, gin.H{"error": "Decodification error"})
 		return
 	}
 
